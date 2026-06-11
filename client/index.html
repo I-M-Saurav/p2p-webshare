@@ -1,11 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>P2P WebShare</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Apply saved theme before page renders to avoid flash
+      const saved = localStorage.getItem('theme')
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    </script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
