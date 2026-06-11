@@ -1,0 +1,11 @@
+{
+  "name": "p2p-webshare",
+  "version": "1.0.0",
+  "description": "Browser-to-browser P2P file sharing via WebRTC",
+  "scripts": {
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "start:server": "cd server && npm start",
+    "install:all": "cd client && npm install && cd ../server && npm install"
+  }
+}
