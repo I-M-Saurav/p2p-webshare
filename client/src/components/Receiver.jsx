@@ -1,15 +1,15 @@
-// Receiver component — joins a room and receives the file
 import { useState } from 'react'
-export default function Receiver({ onJoin, connectionStatus, transferProgress, transferSpeed, receivedFile, peerDisconnected }) {
-  const [inputId, setInputId] = useState('')
-  const [joined, setJoined] = useState(false)
 
-  // Extract room ID from URL if present (when user clicks invite link)
-  useState(() => {
+// Receiver component — lets user enter a Room ID to join a P2P session
+// and displays real-time transfer progress + file receipt confirmation.
+export default function Receiver({ onJoin, connectionStatus, transferProgress, transferSpeed, receivedFile, peerDisconnected }) {
+  
+  // Initialize Room ID directly from URL param if invite link was used
+  const [inputId, setInputId] = useState(() => {
     const params = new URLSearchParams(window.location.search)
-    const room = params.get('room')
-    if (room) { setInputId(room) }
+    return params.get('room') || ''
   })
+  const [joined, setJoined] = useState(false)
 
   function handleJoin() {
     if (!inputId.trim()) return
@@ -17,7 +17,7 @@ export default function Receiver({ onJoin, connectionStatus, transferProgress, t
     onJoin(inputId.trim().toUpperCase())
   }
 
-  // Format bytes
+  // Format bytes to human-readable size
   function formatSize(bytes) {
     if (!bytes) return ''
     if (bytes < 1024) return bytes + ' B'
@@ -27,12 +27,16 @@ export default function Receiver({ onJoin, connectionStatus, transferProgress, t
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      <h2 className="text-2xl font-bold text-violet-400 mb-6 text-center">Receive a File</h2>
+      <h2 className="text-2xl font-bold text-violet-600 dark:text-violet-400 mb-6 text-center">
+        Receive a File
+      </h2>
 
-      {/* Room ID input */}
+      {/* Room ID input — shown before joining */}
       {!joined && (
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-700 space-y-4">
-          <p className="text-gray-400 text-sm text-center">Enter the Room ID shared by the sender</p>
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 space-y-4">
+          <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
+            Enter the Room ID shared by the sender
+          </p>
           <input
             type="text"
             value={inputId}
@@ -40,7 +44,7 @@ export default function Receiver({ onJoin, connectionStatus, transferProgress, t
             onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
             placeholder="e.g. A3F9KL"
             maxLength={6}
-            className="w-full bg-gray-800 text-white text-center text-2xl font-mono tracking-widest rounded-xl py-4 px-4 border border-gray-600 focus:outline-none focus:border-violet-500"
+            className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-center text-2xl font-mono tracking-widest rounded-xl py-4 px-4 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-violet-500 dark:focus:border-violet-400 transition"
           />
           <button
             onClick={handleJoin}
@@ -51,27 +55,31 @@ export default function Receiver({ onJoin, connectionStatus, transferProgress, t
         </div>
       )}
 
-      {/* Waiting / progress state after joining */}
+      {/* Transfer state — shown after joining */}
       {joined && (
         <div className="space-y-4">
-          <div className="bg-gray-900 rounded-2xl p-4 border border-gray-700">
+
+          {/* Room ID display */}
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-700">
             <p className="text-gray-400 text-sm mb-1">Room ID</p>
-            <p className="text-violet-300 font-mono text-2xl font-bold tracking-widest">{inputId}</p>
+            <p className="text-violet-600 dark:text-violet-300 font-mono text-2xl font-bold tracking-widest">
+              {inputId}
+            </p>
           </div>
 
-          {/* Connection status */}
-          <div className="bg-gray-900 rounded-2xl p-4 border border-gray-700">
+          {/* Connection status badge */}
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-700">
             <StatusBadge status={connectionStatus} peerDisconnected={peerDisconnected} />
           </div>
 
-          {/* Transfer progress bar */}
+          {/* Real-time transfer progress bar */}
           {transferProgress > 0 && (
-            <div className="bg-gray-900 rounded-2xl p-4 border border-gray-700 space-y-2">
-              <div className="flex justify-between text-sm text-gray-400">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-700 space-y-2">
+              <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
                 <span>Receiving...</span>
                 <span>{transferProgress}% · {transferSpeed} MB/s</span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-3">
+              <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all duration-300"
                   style={{ width: `${transferProgress}%` }}
@@ -80,25 +88,38 @@ export default function Receiver({ onJoin, connectionStatus, transferProgress, t
             </div>
           )}
 
-          {/* File received successfully */}
+          {/* Success card — shown when file is fully received and verified */}
           {receivedFile && (
-            <div className="bg-green-950 border border-green-700 rounded-2xl p-4 text-center space-y-1">
-              <p className="text-green-400 font-semibold text-lg">✅ File received!</p>
-              <p className="text-green-300 text-sm">{receivedFile.name}</p>
-              <p className="text-green-500 text-xs">{formatSize(receivedFile.size)} · SHA-256 verified ✓</p>
+            <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-700 rounded-2xl p-5 text-center space-y-1">
+              <p className="text-green-600 dark:text-green-400 font-semibold text-lg">
+                ✅ File received!
+              </p>
+              <p className="text-green-700 dark:text-green-300 text-sm font-medium">
+                {receivedFile.name}
+              </p>
+              <p className="text-green-500 text-xs">
+                {formatSize(receivedFile.size)} · SHA-256 verified ✓
+              </p>
             </div>
           )}
 
-          {/* Hash mismatch error */}
+          {/* Hash mismatch error — file corrupted during transfer */}
           {connectionStatus === 'hash-mismatch' && (
-            <div className="bg-red-950 border border-red-700 rounded-2xl p-4 text-red-300 text-sm text-center">
-              ❌ File integrity check failed! The file may be corrupted.
+            <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-700 rounded-2xl p-4 text-red-600 dark:text-red-300 text-sm text-center">
+              ❌ File integrity check failed! The file may be corrupted. Please try again.
             </div>
           )}
 
-          {/* Peer disconnected */}
+          {/* Room not found error */}
+          {connectionStatus === 'room-not-found' && (
+            <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-700 rounded-2xl p-4 text-red-600 dark:text-red-300 text-sm text-center">
+              ❌ Room not found. Check the Room ID and try again.
+            </div>
+          )}
+
+          {/* Peer disconnected warning */}
           {peerDisconnected && (
-            <div className="bg-red-950 border border-red-700 rounded-2xl p-4 text-red-300 text-sm text-center">
+            <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-700 rounded-2xl p-4 text-yellow-600 dark:text-yellow-300 text-sm text-center">
               ⚠️ Sender disconnected from the session.
             </div>
           )}
@@ -108,17 +129,19 @@ export default function Receiver({ onJoin, connectionStatus, transferProgress, t
   )
 }
 
-// Status badge — same pattern as Sender
+// StatusBadge — colour-coded connection state indicator
 function StatusBadge({ status, peerDisconnected }) {
-  if (peerDisconnected) return <p className="text-red-400 text-sm">🔴 Peer disconnected</p>
+  if (peerDisconnected) return (
+    <p className="text-red-500 dark:text-red-400 text-sm font-medium">🔴 Peer disconnected</p>
+  )
 
   const map = {
-    idle:      ['🔵', 'text-blue-400',   'Idle'],
-    connecting:['🟠', 'text-orange-400', 'Connecting to sender...'],
-    connected: ['🟢', 'text-green-400',  'Connected — receiving file...'],
-    done:      ['✅', 'text-green-400',  'Transfer complete!'],
-    'room-not-found': ['🔴', 'text-red-400', 'Room not found. Check the ID.'],
-    failed:    ['🔴', 'text-red-400',    'Connection failed'],
+    idle:             ['🔵', 'text-blue-500 dark:text-blue-400',    'Idle'],
+    connecting:       ['🟠', 'text-orange-500 dark:text-orange-400','Connecting to sender...'],
+    connected:        ['🟢', 'text-green-500 dark:text-green-400',  'Connected — receiving file...'],
+    done:             ['✅', 'text-green-500 dark:text-green-400',  'Transfer complete!'],
+    'room-not-found': ['🔴', 'text-red-500 dark:text-red-400',      'Room not found'],
+    failed:           ['🔴', 'text-red-500 dark:text-red-400',      'Connection failed'],
   }
 
   const [icon, color, label] = map[status] || ['🔵', 'text-gray-400', status]
