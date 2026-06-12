@@ -110,17 +110,29 @@ export default function Receiver({ onJoin, connectionStatus, transferProgress, t
             </div>
           )}
 
-          {/* Room not found error */}
+          {/* Room not found error — with option to try a different ID */}
           {connectionStatus === 'room-not-found' && (
-            <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-700 rounded-2xl p-4 text-red-600 dark:text-red-300 text-sm text-center">
-              ❌ Room not found. Check the Room ID and try again.
+            <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-700 rounded-2xl p-4 text-red-600 dark:text-red-300 text-sm text-center space-y-3">
+              <p>❌ Room not found. Check the Room ID and try again.</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition"
+              >
+                ← Try Again
+              </button>
             </div>
           )}
 
-          {/* Peer disconnected warning */}
+          {/* Peer disconnected warning — with option to go back home */}
           {peerDisconnected && (
-            <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-700 rounded-2xl p-4 text-yellow-600 dark:text-yellow-300 text-sm text-center">
-              ⚠️ Sender disconnected from the session.
+            <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-700 rounded-2xl p-4 text-yellow-600 dark:text-yellow-300 text-sm text-center space-y-3">
+              <p>⚠️ Sender disconnected from the session.</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition"
+              >
+                ← Back to Home
+              </button>
             </div>
           )}
         </div>
