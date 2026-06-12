@@ -1,7 +1,8 @@
 // socket.js — Singleton Socket.io client instance
-// Exported and shared across the app so only one connection is made.
-// In production, replace the URL with the deployed backend URL via env variable.
-
+// Uses environment variable for server URL in production,
+// falls back to localhost for development
 import { io } from 'socket.io-client'
 
-export const socket = io('http://localhost:3001')
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001'
+
+export const socket = io(SERVER_URL)
