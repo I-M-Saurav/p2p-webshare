@@ -38,6 +38,16 @@ export default function App() {
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between backdrop-blur bg-white/80 dark:bg-gray-950/80 sticky top-0 z-10">
         <div className="flex items-center gap-3">
+          {/* Show back button when in sender/receiver mode */}
+          {mode && (
+            <button
+              onClick={() => window.location.reload()}
+              className="text-gray-400 hover:text-violet-500 transition text-sm mr-2"
+              title="Back to home"
+            >
+              ←
+            </button>
+          )}
           <span className="text-2xl">⚡</span>
           <span className="text-xl font-bold text-violet-600 dark:text-violet-400 tracking-tight">P2P WebShare</span>
         </div>

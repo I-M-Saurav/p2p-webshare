@@ -87,6 +87,15 @@ io.on('connection', (socket) => {
     }
   });
 });
+// Keep-alive: prevent Render free tier from spinning down
+// Pings itself every 14 minutes
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL
+if (RENDER_URL) {
+  setInterval(() => {
+    fetch(RENDER_URL).catch(() => {})
+    console.log('🏓 Keep-alive ping sent')
+  }, 14 * 60 * 1000)
+}
 
 const PORT = 3001;
 server.listen(PORT, () => {
