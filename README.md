@@ -10,9 +10,24 @@
 ---
 
 ## 🚀 Live Demo
+---
 
-- **Frontend:** _coming soon (Vercel)_
-- **Signaling Server:** _coming soon (Render)_
+## 📸 Screenshots
+
+### 🌙 Dark Mode
+![Home Dark](./screenshots/home-dark.png)
+
+### ☀️ Light Mode  
+![Home Light](./screenshots/home-light.png)
+
+### 📤 Sending a File
+![Send](./screenshots/send.png)
+
+### 📥 Receiving a File
+![Receive](./screenshots/receive.png)
+
+
+
 
 ---
 
